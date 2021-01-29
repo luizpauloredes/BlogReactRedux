@@ -1,22 +1,54 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {connect} from 'react-redux' ;
-import {fetchPosts} from '../actions';
+import * as postActions from '../actions';
+import PropTypes from 'prop-types'
+import { bindActionCreators } from 'redux';
+import postsReducer from '../reducers/postsReducer'
 
-class PostList extends React.Component {
 
+const PostList = ({posts,actions})=> {
+    /*
     componentDidMount() {
-        this.props.fetchPosts();
+        this.props.loadPosts();
     }
+    */
 
-    render() {
-        console.log(this.props.posts);
-        return <div>Post List</div>
+    useEffect(()=> {
+      actions.loadPosts()   
+    },[])
+    
+    console.log('posts', postActions.loadPosts())
+    return (
+        <div>
+            <div>Post List</div>
+            {posts && posts.map((e,index)=> (
+                <p key={index} >
+                  {e.title}  
+                </p>
+
+
+            ))}
+        </div>    
+    )
+    
+}
+PostList.propTypes = {
+    posts:PropTypes.array.isRequired, 
+    actions:PropTypes.object.isRequired
+}
+
+const mapStateToProps = state => {
+    return {
+        posts: state.posts
     }
 }
 
-const mapStateToPros = state=> {
-    return {posts: state.posts};
+const mapStateDispatchToProps = dispatch => {
+    return {
+        actions: bindActionCreators(postActions, dispatch)
+    };
 }
 
 
-export default connect(mapStateToPros, {fetchPosts})(PostList);
+
+export default connect(mapStateToProps,mapStateDispatchToProps)(PostList);

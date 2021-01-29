@@ -1,9 +1,26 @@
-import jsonPlaceholder from '../apis/jsonPlaceholder';
+
+const getPost = async () => {
+    const response = await  fetch('https://jsonplaceholder.typicode.com/posts')
+    return response.json()
+}
+console.log('getPost', getPost())
 
 
-export const fetchPosts =  () => async  dispatch => {
-        const response = await jsonPlaceholder.get('/posts');
+export function loadContactsSuccess(posts) {
+    return { type: 'FETCH_POSTS', payload: posts.data }
+}
 
-        dispatch({ type: 'FETCH_POSTS', payload: response.data})
-    };
+
+export function loadPosts() {
+    return function (dispatch) {
+
+        return getPost().then(posts => {
+            console.log("posts", posts)
+            dispatch(loadContactsSuccess(posts))
+
+        }).catch(error => {
+            throw error;
+        })
+    }
+}
 
